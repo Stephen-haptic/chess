@@ -80,6 +80,16 @@ public class ChessPiece {
             // Bishop movement up and to the right
             fullLineMove(board, myPosition, -1, 1, moves);
         }
+        if (this.getPieceType() == PieceType.ROOK) {
+            // Rook movement right
+            fullLineMove(board, myPosition, 0, 1, moves);
+            // Rook movement left
+            fullLineMove(board, myPosition, 0, -1, moves);
+            // Rook movement down
+            fullLineMove(board, myPosition, 1, 0, moves);
+            // Rook movement up
+            fullLineMove(board, myPosition, -1, 0, moves);
+        }
         return moves;
     }
 
