@@ -90,6 +90,24 @@ public class ChessPiece {
             // Rook movement up
             fullLineMove(board, myPosition, -1, 0, moves);
         }
+        if (this.getPieceType() == PieceType.QUEEN) {
+            // Queen movement down and to the right
+            fullLineMove(board, myPosition, 1, 1, moves);
+            // Queen movement down and to the left
+            fullLineMove(board, myPosition, 1, -1, moves);
+            // Queen movement up and to the left
+            fullLineMove(board, myPosition, -1, -1, moves);
+            // Queen movement up and to the right
+            fullLineMove(board, myPosition, -1, 1, moves);
+            // Queen movement right
+            fullLineMove(board, myPosition, 0, 1, moves);
+            // Queen movement left
+            fullLineMove(board, myPosition, 0, -1, moves);
+            // Queen movement down
+            fullLineMove(board, myPosition, 1, 0, moves);
+            // Queen movement up
+            fullLineMove(board, myPosition, -1, 0, moves);
+        }
         return moves;
     }
 
