@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -67,6 +68,83 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        if (this.getPieceType() == PieceType.BISHOP) {
+            // Bishop movement down and to the right
+            row += 1;
+            col += 1;
+            while (row <= 8 && col <= 8) {
+                var place = board.getPiece(new ChessPosition(row, col));
+                if (place == null) {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
+                }
+                else if (place.getTeamColor() != this.getTeamColor()) {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
+                    break;
+                }
+                else {
+                    break;
+                }
+                row += 1;
+                col += 1;
+            }
+            // Bishop movement down and to the left
+            row = myPosition.getRow() + 1;
+            col = myPosition.getColumn() - 1;
+            while (row <= 8 && col >= 1) {
+                var place = board.getPiece(new ChessPosition(row, col));
+                if (place == null) {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
+                }
+                else if (place.getTeamColor() != this.getTeamColor()) {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
+                    break;
+                }
+                else {
+                    break;
+                }
+                row += 1;
+                col -= 1;
+            }
+            // Bishop movement up and to the left
+            row = myPosition.getRow() - 1;
+            col = myPosition.getColumn() - 1;
+            while (row >= 1 && col >= 1) {
+                var place = board.getPiece(new ChessPosition(row, col));
+                if (place == null) {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
+                }
+                else if (place.getTeamColor() != this.getTeamColor()) {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
+                    break;
+                }
+                else {
+                    break;
+                }
+                row -= 1;
+                col -= 1;
+            }
+            // Bishop movement up and to the right
+            row = myPosition.getRow() - 1;
+            col = myPosition.getColumn() + 1;
+            while (row >= 1 && col <= 8) {
+                var place = board.getPiece(new ChessPosition(row, col));
+                if (place == null) {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
+                }
+                else if (place.getTeamColor() != this.getTeamColor()) {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
+                    break;
+                }
+                else {
+                    break;
+                }
+                row -= 1;
+                col += 1;
+            }
+        }
+        return moves;
     }
 }
