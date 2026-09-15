@@ -1,5 +1,6 @@
 package chess;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -69,82 +70,38 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
-        int row = myPosition.getRow();
-        int col = myPosition.getColumn();
         if (this.getPieceType() == PieceType.BISHOP) {
             // Bishop movement down and to the right
-            row += 1;
-            col += 1;
-            while (row <= 8 && col <= 8) {
-                var place = board.getPiece(new ChessPosition(row, col));
-                if (place == null) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
-                }
-                else if (place.getTeamColor() != this.getTeamColor()) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
-                    break;
-                }
-                else {
-                    break;
-                }
-                row += 1;
-                col += 1;
-            }
+            fullLineMove(board, myPosition, 1, 1, moves);
             // Bishop movement down and to the left
-            row = myPosition.getRow() + 1;
-            col = myPosition.getColumn() - 1;
-            while (row <= 8 && col >= 1) {
-                var place = board.getPiece(new ChessPosition(row, col));
-                if (place == null) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
-                }
-                else if (place.getTeamColor() != this.getTeamColor()) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
-                    break;
-                }
-                else {
-                    break;
-                }
-                row += 1;
-                col -= 1;
-            }
+            fullLineMove(board, myPosition, 1, -1, moves);
             // Bishop movement up and to the left
-            row = myPosition.getRow() - 1;
-            col = myPosition.getColumn() - 1;
-            while (row >= 1 && col >= 1) {
-                var place = board.getPiece(new ChessPosition(row, col));
-                if (place == null) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
-                }
-                else if (place.getTeamColor() != this.getTeamColor()) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
-                    break;
-                }
-                else {
-                    break;
-                }
-                row -= 1;
-                col -= 1;
-            }
+            fullLineMove(board, myPosition, -1, -1, moves);
             // Bishop movement up and to the right
-            row = myPosition.getRow() - 1;
-            col = myPosition.getColumn() + 1;
-            while (row >= 1 && col <= 8) {
-                var place = board.getPiece(new ChessPosition(row, col));
-                if (place == null) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
-                }
-                else if (place.getTeamColor() != this.getTeamColor()) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
-                    break;
-                }
-                else {
-                    break;
-                }
-                row -= 1;
-                col += 1;
-            }
+            fullLineMove(board, myPosition, -1, 1, moves);
         }
         return moves;
+    }
+
+    public void fullLineMove(ChessBoard board, ChessPosition myPosition, int rowDirection, int colDirection, ArrayList<ChessMove> moves) {
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        row += rowDirection;
+        col += colDirection;
+        while (row <= 8 && col <= 8 && row >= 1 && col >= 1) {
+            var place = board.getPiece(new ChessPosition(row, col));
+            if (place == null) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
+            }
+            else if (place.getTeamColor() != this.getTeamColor()) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
+                break;
+            }
+            else {
+                break;
+            }
+            row += rowDirection;
+            col += colDirection;
+        }
     }
 }
