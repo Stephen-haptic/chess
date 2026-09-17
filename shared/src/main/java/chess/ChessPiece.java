@@ -108,6 +108,16 @@ public class ChessPiece {
             // Queen movement up
             fullLineMove(board, myPosition, -1, 0, moves);
         }
+        if (this.getPieceType() == PieceType.KNIGHT) {
+            knightMove(board, myPosition, 2, 1, moves);
+            knightMove(board, myPosition, 1, 2, moves);
+            knightMove(board, myPosition, -2, 1, moves);
+            knightMove(board, myPosition, -1, 2, moves);
+            knightMove(board, myPosition, 2, -1, moves);
+            knightMove(board, myPosition, 1, -2, moves);
+            knightMove(board, myPosition, -2, -1, moves);
+            knightMove(board, myPosition, -1, -2, moves);
+        }
         return moves;
     }
 
@@ -130,6 +140,20 @@ public class ChessPiece {
             }
             row += rowDirection;
             col += colDirection;
+        }
+    }
+
+    public void knightMove(ChessBoard board, ChessPosition myPosition, int rowOffset, int colOffset, ArrayList<ChessMove> moves) {
+        int row = myPosition.getRow() + rowOffset;
+        int col = myPosition.getColumn() + colOffset;
+        if (row <= 8 && col <= 8 && row >= 1 && col >= 1) {
+            var place = board.getPiece(new ChessPosition(row, col));
+            if (place == null) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
+            }
+            else if (place.getTeamColor() != this.getTeamColor()) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(row, col), null));
+            }
         }
     }
 }
