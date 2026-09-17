@@ -109,14 +109,27 @@ public class ChessPiece {
             fullLineMove(board, myPosition, -1, 0, moves);
         }
         if (this.getPieceType() == PieceType.KNIGHT) {
-            knightMove(board, myPosition, 2, 1, moves);
-            knightMove(board, myPosition, 1, 2, moves);
-            knightMove(board, myPosition, -2, 1, moves);
-            knightMove(board, myPosition, -1, 2, moves);
-            knightMove(board, myPosition, 2, -1, moves);
-            knightMove(board, myPosition, 1, -2, moves);
-            knightMove(board, myPosition, -2, -1, moves);
-            knightMove(board, myPosition, -1, -2, moves);
+            spotCheckMove(board, myPosition, 2, 1, moves);
+            spotCheckMove(board, myPosition, 1, 2, moves);
+            spotCheckMove(board, myPosition, -2, 1, moves);
+            spotCheckMove(board, myPosition, -1, 2, moves);
+            spotCheckMove(board, myPosition, 2, -1, moves);
+            spotCheckMove(board, myPosition, 1, -2, moves);
+            spotCheckMove(board, myPosition, -2, -1, moves);
+            spotCheckMove(board, myPosition, -1, -2, moves);
+        }
+        if (this.getPieceType() == PieceType.KING) {
+            spotCheckMove(board, myPosition, 0, 1, moves);
+            spotCheckMove(board, myPosition, 0, -1, moves);
+            spotCheckMove(board, myPosition, 1, 0, moves);
+            spotCheckMove(board, myPosition, -1, 0, moves);
+            spotCheckMove(board, myPosition, 1, 1, moves);
+            spotCheckMove(board, myPosition, -1, -1, moves);
+            spotCheckMove(board, myPosition, -1, 1, moves);
+            spotCheckMove(board, myPosition, 1, -1, moves);
+        }
+        if (this.getPieceType() == PieceType.PAWN) {
+
         }
         return moves;
     }
@@ -143,7 +156,7 @@ public class ChessPiece {
         }
     }
 
-    public void knightMove(ChessBoard board, ChessPosition myPosition, int rowOffset, int colOffset, ArrayList<ChessMove> moves) {
+    public void spotCheckMove(ChessBoard board, ChessPosition myPosition, int rowOffset, int colOffset, ArrayList<ChessMove> moves) {
         int row = myPosition.getRow() + rowOffset;
         int col = myPosition.getColumn() + colOffset;
         if (row <= 8 && col <= 8 && row >= 1 && col >= 1) {
