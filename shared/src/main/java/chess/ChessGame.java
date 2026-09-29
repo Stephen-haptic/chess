@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -64,7 +65,18 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ArrayList<ChessMove> validMoves =  new ArrayList<>();
+        var place = board.getPiece(startPosition);
+        if (place == null) {
+            return null;
+        }
+        else if (place.getTeamColor() == teamTurn) {
+            validMoves.addAll(place.pieceMoves(board, startPosition));
+            return validMoves;
+        }
+        else {
+            return null;
+        }
     }
 
     /**
