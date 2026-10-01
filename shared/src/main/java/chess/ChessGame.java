@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -70,12 +71,26 @@ public class ChessGame {
         if (place == null) {
             return null;
         }
-        else if (place.getTeamColor() == teamTurn) {
-            validMoves.addAll(place.pieceMoves(board, startPosition));
-            return validMoves;
-        }
         else {
-            return null;
+            validMoves.addAll(place.pieceMoves(board, startPosition));
+
+            Iterator<ChessMove> testMoves = validMoves.iterator();
+
+            while (testMoves.hasNext()) {
+                ChessMove testMove = testMoves.next();
+                ChessPosition preMovePosition = testMove.getStartPosition();
+                ChessPosition preMoveDestination = testMove.getEndPosition();
+                var preMovePiece = board.getPiece(preMovePosition);
+                var preMoveDestPiece = board.getPiece(preMoveDestination);
+                tempMove(testMove);
+                if (isInCheck(place.getTeamColor())) {
+                    testMoves.remove();
+                }
+                board.addPiece(preMovePosition, preMovePiece);
+                board.addPiece(preMoveDestination, preMoveDestPiece);
+            }
+
+            return validMoves;
         }
     }
 
@@ -92,6 +107,10 @@ public class ChessGame {
         Collection<ChessMove> validMoves = validMoves(startPosition);
         if (validMoves != null && validMoves.contains(move)) {
             var place = board.getPiece(startPosition);
+            ChessGame.TeamColor pieceTeam = place.getTeamColor();
+            if (pieceTeam != teamTurn) {
+                throw new InvalidMoveException("Not a valid move.");
+            }
             if (move.getPromotionPiece() != null) {
                 board.addPiece(endPosition, new ChessPiece(place.getTeamColor(), promotionPiece));
             }
@@ -109,6 +128,26 @@ public class ChessGame {
         else {
             throw new InvalidMoveException("Not a valid move.");
         }
+    }
+
+    /**
+     * Makes a temporary move in the chess game
+     *
+     * @param move chess move to perform
+
+     */
+    public void tempMove(ChessMove move) {
+        ChessPosition startPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
+        ChessPiece.PieceType promotionPiece = move.getPromotionPiece();
+        var place = board.getPiece(startPosition);
+        if (move.getPromotionPiece() != null) {
+            board.addPiece(endPosition, new ChessPiece(place.getTeamColor(), promotionPiece));
+        }
+        else {
+            board.addPiece(endPosition, place);
+        }
+        board.addPiece(startPosition, null);
     }
 
     /**
