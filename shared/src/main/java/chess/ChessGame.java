@@ -17,6 +17,7 @@ public class ChessGame {
 
     public ChessGame() {
         this.board = new ChessBoard();
+        this.board.resetBoard();
         this.teamTurn = TeamColor.WHITE;
     }
 
@@ -136,7 +137,7 @@ public class ChessGame {
      * @param move chess move to perform
 
      */
-    public void tempMove(ChessMove move) {
+    private void tempMove(ChessMove move) {
         ChessPosition startPosition = move.getStartPosition();
         ChessPosition endPosition = move.getEndPosition();
         ChessPiece.PieceType promotionPiece = move.getPromotionPiece();
