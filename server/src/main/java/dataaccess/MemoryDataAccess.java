@@ -11,4 +11,10 @@ public class MemoryDataAccess {
     private final Map<String, UserData> users = new HashMap<>();
     private final Map<Integer, GameData> games = new HashMap<>();
     private final Map<String, AuthData> authRecords = new HashMap<>();
+
+    public void clearDatabase() {
+        users.clear();
+        games.clear();
+        authRecords.clear();
+    }
 }
