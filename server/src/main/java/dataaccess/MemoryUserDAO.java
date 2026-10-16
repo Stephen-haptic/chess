@@ -12,4 +12,14 @@ public class MemoryUserDAO implements UserDAO {
     public void clear() {
         users.clear();
     }
+
+    @Override
+    public void storeUser(UserData user) {
+        users.put(user.username(), user);
+    }
+
+    @Override
+    public UserData findUser(String username) {
+        return users.get(username);
+    }
 }
