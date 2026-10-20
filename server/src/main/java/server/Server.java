@@ -1,5 +1,6 @@
 package server;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
@@ -10,13 +11,18 @@ import handler.RegisterHandler;
 import io.javalin.*;
 import service.ClearService;
 import service.RegisterService;
+import io.javalin.json.JavalinGson;
+import java.util.Map;
 
 public class Server {
 
     private final Javalin javalin;
 
     public Server() {
-        javalin = Javalin.create(config -> config.staticFiles.add("web"));
+        javalin = Javalin.create(config -> {
+            config.staticFiles.add("web");
+            config.jsonMapper(new JavalinGson());
+        });
 
         MemoryUserDAO userDAO = new MemoryUserDAO();
         MemoryGameDAO gameDAO = new MemoryGameDAO();
@@ -28,10 +34,10 @@ public class Server {
 
         // Register your endpoints and exception handlers here.
         javalin.exception(BadRequestException.class, (exception, context) -> {
-            context.status(400);
+            context.status(400).json(Map.of("message", exception.getMessage()));
         });
         javalin.exception(AlreadyTakenException.class, (exception, context) -> {
-            context.status(403);
+            context.status(403).json(Map.of("message", exception.getMessage()));
         });
 
         javalin.delete("/db", clearHandler::callClear);

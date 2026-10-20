@@ -20,13 +20,13 @@ public class RegisterService {
 
     public AuthData register(String username, String password, String email) {
         if (username == null || password == null || email == null) {
-            throw new BadRequestException("All fields are required");
+            throw new BadRequestException("Error: bad request");
         }
         else if (username.isBlank() || password.isBlank() || email.isBlank()) {
-            throw new BadRequestException("Field cannot be blank");
+            throw new BadRequestException("Error: bad request");
         }
         else if (userDAO.findUser(username) != null) {
-            throw new AlreadyTakenException("Username already taken");
+            throw new AlreadyTakenException("Error: already taken");
         }
 
         UserData user = new UserData(username, password, email);
