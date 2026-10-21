@@ -1,15 +1,17 @@
 package server;
 
-import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
+import exception.UnauthorizedException;
 import handler.ClearHandler;
+import handler.LoginHandler;
 import handler.RegisterHandler;
 import io.javalin.*;
 import service.ClearService;
+import service.LoginService;
 import service.RegisterService;
 import io.javalin.json.JavalinGson;
 import java.util.Map;
@@ -31,6 +33,8 @@ public class Server {
         ClearHandler clearHandler = new ClearHandler(clearService);
         RegisterService registerService = new RegisterService(userDAO, authDAO);
         RegisterHandler registerHandler = new RegisterHandler(registerService);
+        LoginService loginService = new LoginService(userDAO, authDAO);
+        LoginHandler loginHandler = new LoginHandler(loginService);
 
         // Register your endpoints and exception handlers here.
         javalin.exception(BadRequestException.class, (exception, context) -> {
@@ -39,9 +43,13 @@ public class Server {
         javalin.exception(AlreadyTakenException.class, (exception, context) -> {
             context.status(403).json(Map.of("message", exception.getMessage()));
         });
+        javalin.exception(UnauthorizedException.class, (exception, context) -> {
+            context.status(401).json(Map.of("message", exception.getMessage()));
+        });
 
         javalin.delete("/db", clearHandler::callClear);
         javalin.post("/user", registerHandler::register);
+        javalin.post("/session", loginHandler::login);
 
     }
 
