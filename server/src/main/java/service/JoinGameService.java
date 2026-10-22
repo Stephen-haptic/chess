@@ -18,7 +18,7 @@ public class JoinGameService {
     }
 
     public void joinGame(String authToken, String playerColor, int gameID) {
-        if (authToken == null || authToken.isBlank()) {
+        if (authToken == null || authToken.isBlank() || playerColor == null) {
             throw new BadRequestException("Error: bad request");
         }
         AuthData authData = authDAO.findToken(authToken);
@@ -30,14 +30,14 @@ public class JoinGameService {
             throw new BadRequestException("Error: bad request");
         }
         if (playerColor.equals("WHITE")) {
-            if (!game.whiteUsername().isEmpty()) {
+            if (game.whiteUsername() != null) {
                 throw new AlreadyTakenException("Error: already taken");
             }
             GameData newGame = new GameData(gameID, authData.username(), game.blackUsername(), game.gameName(), game.game());
             gameDAO.updateGame(newGame);
         }
         else if (playerColor.equals("BLACK")) {
-            if (!game.blackUsername().isEmpty()) {
+            if (game.blackUsername() != null) {
                 throw new AlreadyTakenException("Error: already taken");
             }
             GameData newGame = new GameData(gameID, game.whiteUsername(), authData.username(), game.gameName(), game.game());

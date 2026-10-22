@@ -37,6 +37,8 @@ public class Server {
         CreateGameHandler createGameHandler = new CreateGameHandler(createGameService);
         ListGamesService listGamesService = new ListGamesService(authDAO, gameDAO);
         ListGamesHandler listGamesHandler = new ListGamesHandler(listGamesService);
+        JoinGameService joinGameService = new JoinGameService(authDAO, gameDAO);
+        JoinGameHandler joinGameHandler = new JoinGameHandler(joinGameService);
 
         // Register your endpoints and exception handlers here.
         javalin.exception(BadRequestException.class, (exception, context) -> {
@@ -55,7 +57,7 @@ public class Server {
         javalin.delete("/session", logoutHandler::logout);
         javalin.post("/game", createGameHandler::createGame);
         javalin.get("/game", listGamesHandler::listGames);
-
+        javalin.put("/game", joinGameHandler::joinGame);
     }
 
     public int run(int desiredPort) {

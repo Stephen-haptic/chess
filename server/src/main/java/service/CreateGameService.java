@@ -7,6 +7,7 @@ import model.AuthData;
 import model.GameData;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
+import java.util.Random;
 
 public class CreateGameService {
     private final AuthDAO authDAO;
@@ -26,12 +27,17 @@ public class CreateGameService {
             throw new UnauthorizedException("Error: unauthorized");
         }
 
-        int gameID = 1234;
+        int gameID = generateID();
         ChessGame game = new ChessGame();
 
-        GameData gameData = new GameData(gameID, "", "", gameName, game);
+        GameData gameData = new GameData(gameID, null, null, gameName, game);
         gameDAO.storeGame(gameData);
 
         return gameData;
+    }
+
+    public static int generateID() {
+        Random random = new Random();
+        return random.nextInt(90000) + 10000;
     }
 }
