@@ -6,15 +6,9 @@ import dataaccess.MemoryUserDAO;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
-import handler.ClearHandler;
-import handler.LoginHandler;
-import handler.LogoutHandler;
-import handler.RegisterHandler;
+import handler.*;
 import io.javalin.*;
-import service.ClearService;
-import service.LoginService;
-import service.LogoutService;
-import service.RegisterService;
+import service.*;
 import io.javalin.json.JavalinGson;
 import java.util.Map;
 
@@ -39,6 +33,8 @@ public class Server {
         LoginHandler loginHandler = new LoginHandler(loginService);
         LogoutService logoutService = new LogoutService(authDAO);
         LogoutHandler logoutHandler = new LogoutHandler(logoutService);
+        CreateGameService createGameService = new CreateGameService(authDAO, gameDAO);
+        CreateGameHandler createGameHandler = new CreateGameHandler(createGameService);
 
         // Register your endpoints and exception handlers here.
         javalin.exception(BadRequestException.class, (exception, context) -> {
@@ -55,6 +51,7 @@ public class Server {
         javalin.post("/user", registerHandler::register);
         javalin.post("/session", loginHandler::login);
         javalin.delete("/session", logoutHandler::logout);
+        javalin.post("/game", createGameHandler::createGame);
 
     }
 
