@@ -18,7 +18,7 @@ public class ListGamesService {
         this.gameDAO = gameDAO;
     }
 
-    public List<GameData> listGame(String authToken) {
+    public List<GameData> listGames(String authToken) {
         if (authToken == null || authToken.isBlank()) {
             throw new BadRequestException("Error: bad request");
         }
