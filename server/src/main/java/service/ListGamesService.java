@@ -19,9 +19,6 @@ public class ListGamesService {
     }
 
     public List<GameData> listGames(String authToken) {
-        if (authToken == null || authToken.isBlank()) {
-            throw new BadRequestException("Error: bad request");
-        }
         AuthData authData = authDAO.findToken(authToken);
         if(authData == null) {
             throw new UnauthorizedException("Error: unauthorized");

@@ -35,6 +35,8 @@ public class Server {
         LogoutHandler logoutHandler = new LogoutHandler(logoutService);
         CreateGameService createGameService = new CreateGameService(authDAO, gameDAO);
         CreateGameHandler createGameHandler = new CreateGameHandler(createGameService);
+        ListGamesService listGamesService = new ListGamesService(authDAO, gameDAO);
+        ListGamesHandler listGamesHandler = new ListGamesHandler(listGamesService);
 
         // Register your endpoints and exception handlers here.
         javalin.exception(BadRequestException.class, (exception, context) -> {
@@ -52,6 +54,7 @@ public class Server {
         javalin.post("/session", loginHandler::login);
         javalin.delete("/session", logoutHandler::logout);
         javalin.post("/game", createGameHandler::createGame);
+        javalin.get("/game", listGamesHandler::listGames);
 
     }
 
