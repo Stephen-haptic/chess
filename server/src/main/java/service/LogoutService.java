@@ -11,12 +11,11 @@ public class LogoutService {
         this.authDAO = authDAO;
     }
 
-    public AuthData logout(String authToken) {
+    public void logout(String authToken) {
         AuthData authData = authDAO.findToken(authToken);
         if (authData == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }
         authDAO.removeToken(authToken);
-        return authData;
     }
 }

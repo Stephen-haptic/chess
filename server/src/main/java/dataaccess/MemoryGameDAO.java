@@ -32,6 +32,6 @@ public class MemoryGameDAO implements GameDAO {
 
     @Override
     public void updateGame(GameData game) {
-
+        games.put(game.gameID(), game);
     }
 }
