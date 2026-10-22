@@ -4,6 +4,8 @@ import model.GameData;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 public class MemoryGameDAO implements GameDAO {
     private final Map<Integer, GameData> games = new HashMap<>();
@@ -21,6 +23,11 @@ public class MemoryGameDAO implements GameDAO {
     @Override
     public GameData findGame(int gameID) {
         return games.get(gameID);
+    }
+
+    @Override
+    public List<GameData> listGames() {
+        return new ArrayList<>(games.values());
     }
 
     @Override
