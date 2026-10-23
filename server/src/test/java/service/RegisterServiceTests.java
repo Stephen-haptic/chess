@@ -50,4 +50,41 @@ public class RegisterServiceTests {
         assertEquals(username, storedAuth.username());
         assertEquals(result.authToken(), storedAuth.authToken());
     }
+
+    @Test
+    @DisplayName("Required Field Null")
+    public void registerNullField() {
+        assertThrows(BadRequestException.class, () ->
+                registerService.register(null, "Epicpassword", "legit@totallyreal.com"));
+
+        assertThrows(BadRequestException.class, () ->
+                registerService.register("testUser", null, "legit@totallyreal.com"));
+
+        assertThrows(BadRequestException.class, () ->
+                registerService.register("testUser", "Epicpassword", null));
+    }
+
+    @Test
+    @DisplayName("Required Field Blank")
+    public void registerBlankField() {
+        assertThrows(BadRequestException.class, () ->
+                registerService.register("", "Epicpassword", "legit@totallyreal.com"));
+
+        assertThrows(BadRequestException.class, () ->
+                registerService.register("testUser", "", "legit@totallyreal.com"));
+
+        assertThrows(BadRequestException.class, () ->
+                registerService.register("testUser", "Epicpassword", ""));
+    }
+
+    @Test
+    @DisplayName("Username Already Taken")
+    public void registerDuplicateUsername() {
+        String username = "testUser";
+
+        registerService.register(username, "Epicpassword", "legit@totallyreal.com");
+
+        assertThrows(AlreadyTakenException.class, () ->
+                registerService.register(username, "differentPassword", "fake@notlegit.com"));
+    }
 }
