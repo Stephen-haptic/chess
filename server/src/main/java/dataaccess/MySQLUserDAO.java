@@ -8,6 +8,15 @@ import java.sql.SQLException;
 public class MySQLUserDAO implements UserDAO {
     @Override
     public void clear() {
+        String sql = "DELETE FROM `user`";
+
+        try (var conn = DatabaseManager.getConnection();
+             var statement = conn.prepareStatement(sql)) {
+
+            statement.executeUpdate();
+        } catch (SQLException | DataAccessException ex) {
+            throw new RuntimeException("Failed to clear users", ex);
+        }
     }
 
     @Override
