@@ -22,4 +22,15 @@ public class MemoryUserDAO implements UserDAO {
     public UserData findUser(String username) {
         return users.get(username);
     }
+
+    @Override
+    public boolean verifyPassword(String username, String password) {
+        UserData user = findUser(username);
+
+        if (user == null || password == null) {
+            return false;
+        }
+
+        return user.password().equals(password);
+    }
 }

@@ -23,7 +23,7 @@ public class LoginService {
         if (username == null || password == null || username.isBlank() || password.isBlank()) {
             throw new BadRequestException("Error: bad request");
         }
-        else if(user == null || !password.equals(user.password())) {
+        else if(user == null || !userDAO.verifyPassword(username, password)) {
             throw new UnauthorizedException("Error: unauthorized");
         }
 
