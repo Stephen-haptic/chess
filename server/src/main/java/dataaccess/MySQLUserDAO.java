@@ -34,7 +34,34 @@ public class MySQLUserDAO implements UserDAO {
 
     @Override
     public UserData findUser(String username) {
-        return users.get(username);
+        String sql = """
+                SELECT username, password, email
+                FROM `user`
+                WHERE username = ?
+                """;
+
+        try (var conn = DatabaseManager.getConnection();
+            var statement = conn.prepareStatement(sql)) {
+            statement.setString(1, username);
+
+            try (var result = statement.executeQuery()) {
+                if (result.next()) {
+                    String storedUsername = result.getString("username");
+                    String storedPassword = result.getString("password");
+                    String storedEmail = result.getString("email");
+
+                    return new UserData(
+                            storedUsername,
+                            storedPassword,
+                            storedEmail
+                    );
+                }
+            }
+
+            return null;
+        } catch (SQLException | DataAccessException ex) {
+            throw new RuntimeException("Failed to find user", ex);
+        }
     }
 
     @Override
