@@ -39,8 +39,19 @@ public class DatabaseManager {
                 )
                 """;
 
+        var authTable = """
+                CREATE TABLE IF NOT EXISTS `auth` (
+                    authToken VARCHAR(50) NOT NULL,
+                    username VARCHAR(50) NOT NULL,
+                    PRIMARY KEY (authToken)
+                )
+                """;
+
         try (var conn = getConnection()) {
             try (var statement = conn.prepareStatement(userTable)) {
+                statement.executeUpdate();
+            }
+            try (var statement = conn.prepareStatement(authTable)) {
                 statement.executeUpdate();
             }
         } catch (SQLException ex) {
