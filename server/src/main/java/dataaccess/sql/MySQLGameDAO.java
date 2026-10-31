@@ -81,8 +81,6 @@ public class MySQLGameDAO implements GameDAO {
                 FROM `game`
                 """;
 
-        var serializer = new Gson();
-
         ArrayList<GameData> gamesList = new ArrayList<>();
 
         try (var conn = DatabaseManager.getConnection();
