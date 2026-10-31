@@ -5,9 +5,9 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import dataaccess.GameDAO;
-import model.AuthData;
 import model.GameData;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,15 @@ import java.util.List;
 public class MySQLGameDAO implements GameDAO {
     @Override
     public void clear() {
-        games.clear();
+        String sql = "DELETE FROM `game`";
+
+        try (var conn = DatabaseManager.getConnection();
+             var statement = conn.prepareStatement(sql)) {
+
+            statement.executeUpdate();
+        } catch (SQLException | DataAccessException ex) {
+            throw new RuntimeException("Failed to clear games", ex);
+        }
     }
 
     @Override
@@ -55,25 +63,9 @@ public class MySQLGameDAO implements GameDAO {
              var statement = conn.prepareStatement(sql)) {
             statement.setInt(1, gameID);
 
-            var serializer = new Gson();
-
             try (var result = statement.executeQuery()) {
                 if (result.next()) {
-                    int storedGameID = result.getInt("gameID");
-                    String storedWhiteUsername = result.getString("whiteUsername");
-                    String storedBlackUsername = result.getString("blackUsername");
-                    String storedGameName = result.getString("gameName");
-                    String storedGame = result.getString("game");
-
-                    ChessGame deserializedGame = serializer.fromJson(storedGame, ChessGame.class);
-
-                    return new GameData(
-                            storedGameID,
-                            storedWhiteUsername,
-                            storedBlackUsername,
-                            storedGameName,
-                            deserializedGame
-                    );
+                    return readGame(result);
                 }
             }
             return null;
@@ -84,7 +76,25 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public List<GameData> listGames() {
-        return new ArrayList<>(games.values());
+        String sql = """
+                SELECT gameID, whiteUsername, blackUsername, gameName, game
+                FROM `game`
+                """;
+
+        var serializer = new Gson();
+
+        ArrayList<GameData> gamesList = new ArrayList<>();
+
+        try (var conn = DatabaseManager.getConnection();
+             var statement = conn.prepareStatement(sql);
+             var result = statement.executeQuery()) {
+            while (result.next()) {
+                gamesList.add(readGame(result));
+            }
+            return gamesList;
+        } catch (SQLException | DataAccessException ex) {
+            throw new RuntimeException("Failed to find games list", ex);
+        }
     }
 
     @Override
@@ -111,5 +121,24 @@ public class MySQLGameDAO implements GameDAO {
         } catch (SQLException | DataAccessException ex) {
             throw new RuntimeException("Failed to update game", ex);
         }
+    }
+
+    private GameData readGame(ResultSet result) throws SQLException {
+        int storedGameID = result.getInt("gameID");
+        String storedWhiteUsername = result.getString("whiteUsername");
+        String storedBlackUsername = result.getString("blackUsername");
+        String storedGameName = result.getString("gameName");
+        String storedGame = result.getString("game");
+
+        Gson serializer = new Gson();
+        ChessGame deserializedGame = serializer.fromJson(storedGame, ChessGame.class);
+
+        return new GameData(
+                storedGameID,
+                storedWhiteUsername,
+                storedBlackUsername,
+                storedGameName,
+                deserializedGame
+        );
     }
 }
