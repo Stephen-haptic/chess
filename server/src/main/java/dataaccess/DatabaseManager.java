@@ -47,11 +47,25 @@ public class DatabaseManager {
                 )
                 """;
 
+        var gameTable = """
+                CREATE TABLE IF NOT EXISTS `game` (
+                    gameID INT NOT NULL,
+                    whiteUsername VARCHAR(50) NULL,
+                    blackUsername VARCHAR(50) NULL,
+                    gameName VARCHAR(100) NOT NULL,
+                    game TEXT NOT NULL,
+                    PRIMARY KEY (gameID)
+                )
+                """;
+
         try (var conn = getConnection()) {
             try (var statement = conn.prepareStatement(userTable)) {
                 statement.executeUpdate();
             }
             try (var statement = conn.prepareStatement(authTable)) {
+                statement.executeUpdate();
+            }
+            try (var statement = conn.prepareStatement(gameTable)) {
                 statement.executeUpdate();
             }
         } catch (SQLException ex) {
