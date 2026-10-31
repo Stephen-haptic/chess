@@ -1,6 +1,9 @@
 package server;
 
 import dataaccess.*;
+import dataaccess.sql.MySQLAuthDAO;
+import dataaccess.sql.MySQLGameDAO;
+import dataaccess.sql.MySQLUserDAO;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
@@ -27,9 +30,9 @@ public class Server {
             config.jsonMapper(new JavalinGson());
         });
 
-        MemoryUserDAO userDAO = new MemoryUserDAO();
-        MemoryGameDAO gameDAO = new MemoryGameDAO();
-        MemoryAuthDAO authDAO = new MemoryAuthDAO();
+        MySQLUserDAO userDAO = new MySQLUserDAO();
+        MySQLGameDAO gameDAO = new MySQLGameDAO();
+        MySQLAuthDAO authDAO = new MySQLAuthDAO();
         ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
         ClearHandler clearHandler = new ClearHandler(clearService);
         RegisterService registerService = new RegisterService(userDAO, authDAO);
@@ -54,6 +57,9 @@ public class Server {
         });
         javalin.exception(UnauthorizedException.class, (exception, context) -> {
             context.status(401).json(Map.of("message", exception.getMessage()));
+        });
+        javalin.exception(RuntimeException.class, (exception, context) -> {
+            context.status(500).json(Map.of("message", "Error: Internal server error"));
         });
 
         javalin.delete("/db", clearHandler::callClear);
