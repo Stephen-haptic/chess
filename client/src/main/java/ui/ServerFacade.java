@@ -1,6 +1,8 @@
 package ui;
 
 import com.google.gson.Gson;
+import model.AuthData;
+import model.UserData;
 
 import java.io.IOException;
 import java.net.URI;
@@ -48,10 +50,27 @@ public class ServerFacade {
 
         HttpRequest request = builder.build();
 
-        return null;
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() > 199 && response.statusCode() < 300) {
+            if (responseType == null) {
+                return null;
+            }
+            return gson.fromJson(response.body(), responseType);
+        }
+        else {
+            throw new IOException("Request Failed");
+        }
     }
 
     //Register
+    public AuthData register(String username, String password, String email)
+            throws IOException, InterruptedException {
+
+        UserData user = new UserData(username, password, email);
+
+        return makeRequest("POST", "/user", user, null, AuthData.class);
+    }
 
     //Login
 
