@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import model.AuthData;
 import model.LoginRequest;
 import model.UserData;
+import model.ListGamesResult;
 
 import java.io.IOException;
 import java.net.URI;
@@ -89,6 +90,10 @@ public class ServerFacade {
     }
 
     //List Games
+    public ListGamesResult listGames (String authToken)
+            throws IOException, InterruptedException {
+        return makeRequest("GET", "/game", null, authToken, ListGamesResult.class);
+    }
 
     //Create Game
 

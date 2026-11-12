@@ -1,5 +1,7 @@
 package client;
 
+import model.GameData;
+import model.ListGamesResult;
 import org.junit.jupiter.api.*;
 import server.Server;
 import model.AuthData;
@@ -135,4 +137,31 @@ public class ServerFacadeTests {
             facade.logout("invalid");
         });
     }
+
+    @Test
+    @DisplayName("Successful List Games")
+    public void listGamesSuccess() throws IOException, InterruptedException {
+        AuthData authData = facade.register(
+                "testUser",
+                "Epicpassword",
+                "legit@totallyreal.com"
+        );
+
+        ListGamesResult result = facade.listGames(authData.authToken());
+
+        Assertions.assertNotNull(result);
+        Assertions.assertNotNull(result.games());
+        Assertions.assertTrue(result.games().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Failed List Games")
+    public void listGamesFailed() throws IOException, InterruptedException {
+        Assertions.assertThrows(IOException.class, () -> {
+            facade.listGames("invalid");
+        });
+    }
+
+
+
 }
