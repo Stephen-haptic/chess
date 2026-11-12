@@ -83,6 +83,10 @@ public class ServerFacade {
     }
 
     //Logout
+    public void logout(String authToken)
+            throws IOException, InterruptedException {
+        makeRequest("DELETE", "/session", null, authToken, null);
+    }
 
     //List Games
 

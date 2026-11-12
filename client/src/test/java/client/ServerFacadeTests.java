@@ -114,4 +114,25 @@ public class ServerFacadeTests {
             );
         });
     }
+
+    @Test
+    @DisplayName("Successful Logout")
+    public void logoutSuccess() throws IOException, InterruptedException {
+        AuthData authData = facade.register(
+                "testUser",
+                "Epicpassword",
+                "legit@totallyreal.com"
+        );
+        Assertions.assertDoesNotThrow(() -> {
+            facade.logout(authData.authToken());
+        });
+    }
+
+    @Test
+    @DisplayName("Failed Logout")
+    public void logoutFailed() throws IOException, InterruptedException {
+        Assertions.assertThrows(IOException.class, () -> {
+            facade.logout("invalid");
+        });
+    }
 }
