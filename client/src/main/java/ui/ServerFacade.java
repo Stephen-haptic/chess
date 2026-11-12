@@ -5,6 +5,8 @@ import model.AuthData;
 import model.LoginRequest;
 import model.UserData;
 import model.ListGamesResult;
+import model.CreateGameRequest;
+import model.CreateGameResult;
 
 import java.io.IOException;
 import java.net.URI;
@@ -96,6 +98,12 @@ public class ServerFacade {
     }
 
     //Create Game
+    public CreateGameResult createGame (String gameName, String authToken)
+            throws IOException, InterruptedException {
+        CreateGameRequest gameRequest = new CreateGameRequest(gameName);
+
+        return makeRequest("POST", "/game", gameRequest, authToken, CreateGameResult.class);
+    }
 
     //Join Game
 }

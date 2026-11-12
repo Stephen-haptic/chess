@@ -1,5 +1,6 @@
 package client;
 
+import model.CreateGameResult;
 import model.GameData;
 import model.ListGamesResult;
 import org.junit.jupiter.api.*;
@@ -163,5 +164,31 @@ public class ServerFacadeTests {
     }
 
 
+    @Test
+    @DisplayName("Create Game Success")
+    public void createGamesSuccess() throws IOException, InterruptedException {
+        AuthData authData = facade.register(
+                "testUser",
+                "Epicpassword",
+                "legit@totallyreal.com"
+        );
 
+        CreateGameResult gameResult = facade.createGame("The Game", authData.authToken());
+
+        Assertions.assertNotNull(gameResult);
+        Assertions.assertTrue(gameResult.gameID() > 0);
+        ListGamesResult games = facade.listGames(authData.authToken());
+
+        Assertions.assertEquals(1, games.games().size());
+        Assertions.assertEquals("The Game", games.games().get(0).gameName());
+        Assertions.assertEquals(gameResult.gameID(), games.games().get(0).gameID());
+    }
+
+    @Test
+    @DisplayName("Create Game Failure")
+    public void createGamesFailure() throws IOException, InterruptedException {
+        Assertions.assertThrows(IOException.class, () -> {
+            facade.createGame("Test Game", "invalid");
+        });
+    }
 }
