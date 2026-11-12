@@ -2,6 +2,7 @@ package ui;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import model.LoginRequest;
 import model.UserData;
 
 import java.io.IOException;
@@ -73,6 +74,13 @@ public class ServerFacade {
     }
 
     //Login
+    public AuthData login(String username, String password)
+            throws IOException, InterruptedException {
+
+        LoginRequest loginRequest = new LoginRequest(username, password);
+
+        return makeRequest("POST", "/session", loginRequest, null, AuthData.class);
+    }
 
     //Logout
 
