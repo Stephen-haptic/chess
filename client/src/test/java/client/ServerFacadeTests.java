@@ -77,4 +77,41 @@ public class ServerFacadeTests {
             );
         });
     }
+
+    @Test
+    @DisplayName("Successful Login")
+    public void loginSuccess() throws IOException, InterruptedException {
+        AuthData result = facade.register(
+                "testUser",
+                "Epicpassword",
+                "legit@totallyreal.com"
+        );
+
+        AuthData returned = facade.login(
+                "testUser",
+                "Epicpassword"
+        );
+
+        Assertions.assertNotNull(returned);
+        Assertions.assertEquals("testUser", returned.username());
+        Assertions.assertNotNull(returned.authToken());
+        Assertions.assertFalse(returned.authToken().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Login Failed")
+    public void loginFailure() throws IOException, InterruptedException {
+        facade.register(
+                "testUserStrikesBack",
+                "Epicpassword",
+                "legit@totallyreal.com"
+        );
+
+        Assertions.assertThrows(IOException.class, () -> {
+            facade.login(
+                    "testUserStrikesBack",
+                    "Epicpassword2"
+            );
+        });
+    }
 }
