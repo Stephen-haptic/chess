@@ -1,12 +1,10 @@
 package client;
 
 import model.CreateGameResult;
-import model.GameData;
 import model.ListGamesResult;
 import org.junit.jupiter.api.*;
 import server.Server;
 import model.AuthData;
-import ui.ServerFacade;
 
 import java.io.IOException;
 import java.net.URI;
@@ -189,6 +187,50 @@ public class ServerFacadeTests {
     public void createGamesFailure() throws IOException, InterruptedException {
         Assertions.assertThrows(IOException.class, () -> {
             facade.createGame("Test Game", "invalid");
+        });
+    }
+
+    @Test
+    @DisplayName("Successful Join Game")
+    public void joinGameSuccess() throws IOException, InterruptedException {
+        AuthData authData = facade.register(
+                "testUser",
+                "Epicpassword",
+                "legit@totallyreal.com"
+        );
+
+        CreateGameResult game = facade.createGame(
+                "Test Game",
+                authData.authToken()
+        );
+
+        Assertions.assertDoesNotThrow(() -> {
+            facade.joinGame("WHITE", game.gameID(), authData.authToken());
+        });
+
+        ListGamesResult games = facade.listGames(authData.authToken());
+
+        Assertions.assertEquals(1, games.games().size());
+        Assertions.assertEquals("testUser", games.games().get(0).whiteUsername());
+        Assertions.assertNull(games.games().get(0).blackUsername());
+    }
+
+    @Test
+    @DisplayName("Failed Join Game")
+    public void joinGameInvalidToken() throws IOException, InterruptedException {
+        AuthData authData = facade.register(
+                "testUser",
+                "Epicpassword",
+                "legit@totallyreal.com"
+        );
+
+        CreateGameResult game = facade.createGame(
+                "Test Game",
+                authData.authToken()
+        );
+
+        Assertions.assertThrows(IOException.class, () -> {
+            facade.joinGame("WHITE", game.gameID(), "invalid");
         });
     }
 }

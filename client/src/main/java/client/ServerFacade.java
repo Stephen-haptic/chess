@@ -1,12 +1,7 @@
-package ui;
+package client;
 
 import com.google.gson.Gson;
-import model.AuthData;
-import model.LoginRequest;
-import model.UserData;
-import model.ListGamesResult;
-import model.CreateGameRequest;
-import model.CreateGameResult;
+import model.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,7 +9,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpResponse.BodyHandlers;
 
 public class ServerFacade {
     private static final HttpClient client = HttpClient.newHttpClient();
@@ -106,4 +100,10 @@ public class ServerFacade {
     }
 
     //Join Game
+    public void joinGame(String playerColor, int gameID, String authToken)
+            throws IOException, InterruptedException {
+        JoinGameRequest joinGameRequest = new JoinGameRequest(playerColor, gameID);
+
+        makeRequest("PUT", "/game", joinGameRequest, authToken, null);
+    }
 }
