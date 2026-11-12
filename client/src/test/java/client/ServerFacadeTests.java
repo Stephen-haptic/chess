@@ -2,17 +2,41 @@ package client;
 
 import org.junit.jupiter.api.*;
 import server.Server;
+import model.AuthData;
+import ui.ServerFacade;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public class ServerFacadeTests {
-
+    private static int port;
     private static Server server;
+    private static ServerFacade facade;
 
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(0);
+        port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
+        facade = new ServerFacade("http://localhost:"  + port);
+    }
+
+    @BeforeEach
+    public void clearDatabase() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/db"))
+                .DELETE()
+                .build();
+
+        HttpResponse<String> response =
+                client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        Assertions.assertEquals(200, response.statusCode());
     }
 
     @AfterAll
@@ -22,8 +46,35 @@ public class ServerFacadeTests {
 
 
     @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+    @DisplayName("Successful Register")
+    public void registerSuccess() throws IOException, InterruptedException {
+        AuthData result = facade.register(
+                "testUser",
+                "Epicpassword",
+                "legit@totallyreal.com"
+        );
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("testUser", result.username());
+        Assertions.assertNotNull(result.authToken());
+        Assertions.assertFalse(result.authToken().isEmpty());
     }
 
+    @Test
+    @DisplayName("Register Failed")
+    public void registerFailure() throws IOException, InterruptedException {
+        facade.register(
+                "testUserStrikesBack",
+                "Epicpassword",
+                "legit@totallyreal.com"
+        );
+
+        Assertions.assertThrows(IOException.class, () -> {
+            facade.register(
+                    "testUserStrikesBack",
+                    "Epicpassword2",
+                    "legit@totallynotreal.com"
+            );
+        });
+    }
 }
