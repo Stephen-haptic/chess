@@ -7,7 +7,7 @@ import model.GameData;
 import model.ListGamesResult;
 
 import java.io.IOException;
-import java.util.Locale;
+import java.util.List;
 import java.util.Scanner;
 
 import static java.lang.System.out;
@@ -16,6 +16,7 @@ public class PostloginUI {
     private final ServerFacade facade;
     private final Scanner scanner;
     private final AuthData authData;
+    private List<GameData> games;
 
     public PostloginUI(ServerFacade facade, Scanner scanner, AuthData authData) {
         this.facade = facade;
@@ -55,8 +56,8 @@ public class PostloginUI {
         out.println("logout - logs you out");
         out.println("create - enter <GAME NAME> to create a chess game");
         out.println("list - lists all existing games");
-        out.println("play - enter <GAME ID> to join a game");
-        out.println("observe -  enter <GAME ID> to watch a game in progress");
+        out.println("play - enter <GAME NUMBER> to join a game");
+        out.println("observe -  enter <GAME NUMBER> to watch a game in progress");
     }
 
     private boolean logout() {
@@ -93,11 +94,12 @@ public class PostloginUI {
         String black;
         try {
             ListGamesResult result = facade.listGames(authData.authToken());
-            if (result.games() == null || result.games().isEmpty()) {
+            games = result.games();
+            if (games == null || games.isEmpty()) {
                 out.println("No games available.");
-            }
-            else {
-                for (GameData game : result.games()) {
+            } else {
+                for (int i = 0; i < games.size(); i++) {
+                    GameData game = games.get(i);
                     if (game.whiteUsername() != null) {
                         white = game.whiteUsername();
                     }
@@ -110,7 +112,7 @@ public class PostloginUI {
                     else {
                         black = "Open";
                     }
-                    out.println("Game ID: " + game.gameID() + " | "
+                    out.println((i + 1) + " | "
                     + "Name: " + game.gameName() + " | "
                     + "White: " + white + " | "
                     + "Black: " + black);
@@ -125,37 +127,53 @@ public class PostloginUI {
     }
 
     private void play() {
+        if (games == null || games.isEmpty()) {
+            out.println("Please list the games before joining one.");
+            return;
+        }
+
         boolean colorCorrect = false;
         boolean IDCorrect = false;
         String color = "";
-        int gameID = -1;
+        int gameNumber = -1;
+
         while (!IDCorrect) {
-            out.print("Please enter a ID: ");
+            out.print("Please enter a Game Number: ");
             try {
-                gameID = Integer.parseInt(scanner.nextLine().trim());
+                gameNumber = Integer.parseInt(scanner.nextLine().trim());
             } catch (NumberFormatException e) {
-                out.println("Invalid game ID. Please enter a number.");
+                out.println("Invalid game number. Please enter a number.");
                 continue;
             }
+
+            if (gameNumber < 1 || gameNumber > games.size()) {
+                out.println("Invalid game number. Please select a game from the list.");
+                continue;
+            }
+
             IDCorrect = true;
         }
+
         while (!colorCorrect) {
-            out.println("White or Black: ");
-            color = scanner.nextLine().toLowerCase(Locale.ROOT);
-            if (color.isEmpty()) {
-                out.println("Please enter WHITE or BLACK.");
-                continue;
-            }
-            if (color.charAt(0) == 'w') {
+            out.print("White or Black: ");
+            color = scanner.nextLine().trim();
+
+            if (color.equalsIgnoreCase("white") || color.equalsIgnoreCase("w")) {
                 color = "WHITE";
                 colorCorrect = true;
-            } else if (color.charAt(0) == 'b') {
+            } else if (color.equalsIgnoreCase("black") || color.equalsIgnoreCase("b")) {
                 color = "BLACK";
                 colorCorrect = true;
+            } else {
+                out.println("Please enter WHITE or BLACK.");
             }
         }
+
+        int gameID = games.get(gameNumber - 1).gameID();
+
         try {
             facade.joinGame(color, gameID, authData.authToken());
+            out.println("Successfully joined game " + gameNumber + " as " + color);
         } catch (IOException e) {
             out.println("Play game failed: " + e.getMessage());
         } catch (InterruptedException e) {
