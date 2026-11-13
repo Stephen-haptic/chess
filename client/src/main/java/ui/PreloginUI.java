@@ -47,6 +47,10 @@ public class PreloginUI {
         return authData;
     }
 
+    public void clearAuthData() {
+        authData = null;
+    }
+
     private void help() {
         out.println("help - displays available commands");
         out.println("quit - exit the program");
