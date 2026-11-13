@@ -85,7 +85,7 @@ public class PreloginUI {
             authData = facade.register(username, password, email);
             out.println("Logged in as: " + authData.username());
         } catch (IOException e) {
-            e.printStackTrace();
+            out.println("Register failed: " + e.getMessage());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             out.println("Register interrupted");
