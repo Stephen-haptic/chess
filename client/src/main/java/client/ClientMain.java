@@ -1,9 +1,11 @@
 package client;
 
-import chess.*;
+import model.AuthData;
 import ui.PreloginUI;
 
 import java.util.Scanner;
+
+import static java.lang.System.out;
 
 public class ClientMain {
     public static void main(String[] args) {
@@ -11,15 +13,21 @@ public class ClientMain {
         ServerFacade facade = new ServerFacade("http://localhost:8080");
         PreloginUI preloginUI = new PreloginUI(facade, scanner);
         boolean running = true;
+        AuthData authData;
 
-        System.out.println("♕ Welcome to 240 Chess!");
+        out.println("♕ Welcome to 240 Chess!");
 
         while (running) {
-            System.out.print(">>> ");
-
+            authData = preloginUI.getAuthData();
+            out.print(">>> ");
             String input = scanner.nextLine().trim().toLowerCase();
 
-            running = preloginUI.handleCommand(input);
+            if (authData == null) {
+                running = preloginUI.handleCommand(input);
+            }
+            else {
+                out.println("NAN");
+            }
         }
     }
 }
