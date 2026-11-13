@@ -2,7 +2,6 @@ package ui;
 
 import client.ServerFacade;
 import model.AuthData;
-import model.CreateGameResult;
 import model.GameData;
 import model.ListGamesResult;
 
@@ -45,6 +44,10 @@ public class PostloginUI {
                 play();
                 return true;
 
+            case "observe":
+                observe();
+                return true;
+
             default:
                 out.println("Unknown command. Type 'help' for available commands.");
                 return true;
@@ -79,8 +82,8 @@ public class PostloginUI {
         out.print("Please enter a Game Name: ");
         String gameName = scanner.nextLine().trim();
         try {
-            CreateGameResult result = facade.createGame(gameName, authData.authToken());
-            out.println("Game Created! Game ID: " + result.gameID());
+            facade.createGame(gameName, authData.authToken());
+            out.println("Game Created!");
         } catch (IOException e) {
             out.println("Game creation failed: " + e.getMessage());
         } catch (InterruptedException e) {
@@ -133,30 +136,19 @@ public class PostloginUI {
         }
 
         boolean colorCorrect = false;
-        boolean IDCorrect = false;
         String color = "";
-        int gameNumber = -1;
 
-        while (!IDCorrect) {
-            out.print("Please enter a Game Number: ");
-            try {
-                gameNumber = Integer.parseInt(scanner.nextLine().trim());
-            } catch (NumberFormatException e) {
-                out.println("Invalid game number. Please enter a number.");
-                continue;
-            }
-
-            if (gameNumber < 1 || gameNumber > games.size()) {
-                out.println("Invalid game number. Please select a game from the list.");
-                continue;
-            }
-
-            IDCorrect = true;
+        int gameNumber = getGameNumber();
+        if (gameNumber == -1) {
+            return;
         }
 
         while (!colorCorrect) {
             out.print("White or Black: ");
             color = scanner.nextLine().trim();
+            if (color.equalsIgnoreCase("cancel")) {
+                return;
+            }
 
             if (color.equalsIgnoreCase("white") || color.equalsIgnoreCase("w")) {
                 color = "WHITE";
@@ -179,6 +171,52 @@ public class PostloginUI {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             out.println("Play game interrupted");
+        }
+    }
+
+    private void observe() {
+        if (games == null || games.isEmpty()) {
+            out.println("Please list the games before observing one.");
+            return;
+        }
+
+        int gameNumber = getGameNumber();
+        if (gameNumber == -1) {
+            return;
+        }
+
+        GameData selectedGame = games.get(gameNumber - 1);
+
+        out.println("Observing: " + selectedGame.gameName());
+
+        // Add chessboard drawin
+    }
+
+    private int getGameNumber() {
+        while (true) {
+            out.print("Please enter a Game Number: ");
+
+            String input = scanner.nextLine().trim();
+
+            if (input.equalsIgnoreCase("cancel")) {
+                return -1;
+            }
+
+            int gameNumber;
+
+            try {
+                gameNumber = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                out.println("Invalid game number. Please enter a number.");
+                continue;
+            }
+
+            if (gameNumber < 1 || gameNumber > games.size()) {
+                out.println("Invalid game number. Please select a game from the list.");
+                continue;
+            }
+
+            return gameNumber;
         }
     }
 }
