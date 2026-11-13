@@ -7,6 +7,7 @@ import model.GameData;
 import model.ListGamesResult;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Scanner;
 
 import static java.lang.System.out;
@@ -37,6 +38,10 @@ public class PostloginUI {
 
             case "list":
                 list();
+                return true;
+
+            case "play":
+                play();
                 return true;
 
             default:
@@ -116,6 +121,46 @@ public class PostloginUI {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             out.println("List interrupted");
+        }
+    }
+
+    private void play() {
+        boolean colorCorrect = false;
+        boolean IDCorrect = false;
+        String color = "";
+        int gameID = -1;
+        while (!IDCorrect) {
+            out.print("Please enter a ID: ");
+            try {
+                gameID = Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                out.println("Invalid game ID. Please enter a number.");
+                continue;
+            }
+            IDCorrect = true;
+        }
+        while (!colorCorrect) {
+            out.println("White or Black: ");
+            color = scanner.nextLine().toLowerCase(Locale.ROOT);
+            if (color.isEmpty()) {
+                out.println("Please enter WHITE or BLACK.");
+                continue;
+            }
+            if (color.charAt(0) == 'w') {
+                color = "WHITE";
+                colorCorrect = true;
+            } else if (color.charAt(0) == 'b') {
+                color = "BLACK";
+                colorCorrect = true;
+            }
+        }
+        try {
+            facade.joinGame(color, gameID, authData.authToken());
+        } catch (IOException e) {
+            out.println("Play game failed: " + e.getMessage());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            out.println("Play game interrupted");
         }
     }
 }
