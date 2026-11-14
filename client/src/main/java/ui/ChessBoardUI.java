@@ -20,7 +20,7 @@ public class ChessBoardUI {
         int colStep = isWhite ? 1 : -1;
 
         for (int row = rowStart; row != rowEnd + rowStep; row += rowStep) {
-            out.print(row + " ");
+            out.print(" " + row + " ");
 
             for (int col = colStart; col != colEnd + colStep; col += colStep) {
                 ChessPosition position = new ChessPosition(row, col);
@@ -48,9 +48,9 @@ public class ChessBoardUI {
             out.println();
         }
         if (isWhite) {
-            out.println("    a   b   c   d   e   f   g   h");
+            out.println("   a   b   c   d   e   f   g   h");
         } else {
-            out.println("    h   g   f   e   d   c   b   a");
+            out.println("   h   g   f   e   d   c   b   a");
         }
     }
 
