@@ -11,7 +11,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpRequest.BodyPublishers;
 
 public class ServerFacade {
-    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final HttpClient CLIENT = HttpClient.newHttpClient();
 
     private final String serverUrl;
     private final Gson gson = new Gson();
@@ -48,7 +48,7 @@ public class ServerFacade {
 
         HttpRequest request = builder.build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() > 199 && response.statusCode() < 300) {
             if (responseType == null) {
