@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import client.ServerFacade;
 import model.AuthData;
 import model.GameData;
@@ -165,6 +167,7 @@ public class PostloginUI {
 
         try {
             facade.joinGame(color, gameID, authData.authToken());
+            displayBoard(ChessGame.TeamColor.valueOf(color));
             out.println("Successfully joined game " + gameNumber + " as " + color);
         } catch (IOException e) {
             out.println("Play game failed: " + e.getMessage());
@@ -189,7 +192,7 @@ public class PostloginUI {
 
         out.println("Observing: " + selectedGame.gameName());
 
-        // Add chessboard drawin
+        displayBoard(ChessGame.TeamColor.WHITE);
     }
 
     private int getGameNumber() {
@@ -218,5 +221,12 @@ public class PostloginUI {
 
             return gameNumber;
         }
+    }
+
+    private void displayBoard(ChessGame.TeamColor perspective) {
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        ChessBoardUI boardUI = new ChessBoardUI();
+        boardUI.drawBoard(board, perspective);
     }
 }

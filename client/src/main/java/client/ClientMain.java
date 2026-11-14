@@ -1,7 +1,6 @@
 package client;
 
 import chess.ChessBoard;
-import chess.ChessGame;
 import model.AuthData;
 import ui.ChessBoardUI;
 import ui.PostloginUI;
@@ -13,18 +12,6 @@ import static java.lang.System.out;
 
 public class ClientMain {
     public static void main(String[] args) {
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-
-        ChessBoardUI boardUI = new ChessBoardUI();
-
-        out.println("WHITE Perspective:");
-        boardUI.drawBoard(board, ChessGame.TeamColor.WHITE);
-
-        out.println();
-
-        out.println("BLACK Perspective:");
-        boardUI.drawBoard(board, ChessGame.TeamColor.BLACK);
         Scanner scanner = new Scanner(System.in);
         ServerFacade facade = new ServerFacade("http://localhost:8080");
         PreloginUI preloginUI = new PreloginUI(facade, scanner);
